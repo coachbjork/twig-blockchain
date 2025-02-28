@@ -105,7 +105,7 @@ def startNode(nodeIndex, account):
         # max-transaction-time must be less than block time
         # (which is defined in .../chain/include/eosio/chain/config.hpp
         # as block_interval_ms = 500)
-        '    --max-transaction-time=200'
+        '    --max-transaction-time=1300'
         '    --contracts-console'
         '    --genesis-json ' + os.path.abspath(args.genesis) +
         '    --blocks-dir ' + os.path.abspath(dir) + '/blocks'
@@ -174,7 +174,7 @@ def createStakedAccounts(b, e):
         stakeCpu = stake - stakeNet
         print('%s: total funds=%s, ram=%s, net=%s, cpu=%s, unstaked=%s' % (a['name'], intToCurrency(a['funds']), intToCurrency(ramFunds), intToCurrency(stakeNet), intToCurrency(stakeCpu), intToCurrency(unstaked)))
         assert(funds == ramFunds + stakeNet + stakeCpu + unstaked)
-        retry(args.cleos + 'system newaccount --transfer eosio %s %s --stake-net "%s" --stake-cpu "%s" --buy-ram "%s"   ' % 
+        retry(args.cleos + 'system newaccount --transfer eosio %s %s --stake-net "%s" --stake-cpu "%s" --buy-ram "%s"   ' %
             (a['name'], a['pub'], intToCurrency(stakeNet), intToCurrency(stakeCpu), intToCurrency(ramFunds)))
         if unstaked:
             retry(args.cleos + 'transfer eosio %s "%s"' % (a['name'], intToCurrency(unstaked)))
@@ -249,7 +249,7 @@ def msigProposeReplaceSystem(proposer, proposalName):
     trxPermissions = [{'actor': 'eosio', 'permission': 'active'}]
     with open(fastUnstakeSystem, mode='rb') as f:
         setcode = {'account': 'eosio', 'vmtype': 0, 'vmversion': 0, 'code': f.read().hex()}
-    run(args.cleos + 'multisig propose ' + proposalName + jsonArg(requestedPermissions) + 
+    run(args.cleos + 'multisig propose ' + proposalName + jsonArg(requestedPermissions) +
         jsonArg(trxPermissions) + 'eosio setcode' + jsonArg(setcode) + ' -p ' + proposer)
 
 def msigApproveReplaceSystem(proposer, proposalName):
@@ -295,19 +295,19 @@ def stepCreateTokens():
     run(args.cleos + 'push action eosio.token issue \'["eosio", "%s", "memo"]\' -p eosio' % intToCurrency(totalAllocation))
     sleep(1)
 def stepSetSystemContract():
-    # All of the protocol upgrade features introduced in v1.8 first require a special protocol 
-    # feature (codename PREACTIVATE_FEATURE) to be activated and for an updated version of the system 
-    # contract that makes use of the functionality introduced by that feature to be deployed. 
+    # All of the protocol upgrade features introduced in v1.8 first require a special protocol
+    # feature (codename PREACTIVATE_FEATURE) to be activated and for an updated version of the system
+    # contract that makes use of the functionality introduced by that feature to be deployed.
 
     # activate PREACTIVATE_FEATURE before installing eosio.boot
-    retry('curl -X POST http://127.0.0.1:%d' % args.http_port + 
+    retry('curl -X POST http://127.0.0.1:%d' % args.http_port +
         '/v1/producer/schedule_protocol_feature_activations ' +
         '-d \'{"protocol_features_to_activate": ["0ec7e080177b2c02b278d5088611686b49d739925a92d9bfcacd7fc6b74053bd"]}\'')
     sleep(3)
 
-    # install eosio.boot which supports the native actions and activate 
-    # action that allows activating desired protocol features prior to 
-    # deploying a system contract with more features such as eosio.bios 
+    # install eosio.boot which supports the native actions and activate
+    # action that allows activating desired protocol features prior to
+    # deploying a system contract with more features such as eosio.bios
     # or eosio.system
     retry(args.cleos + 'set contract eosio ' + args.contracts_dir + '/eosio.boot/')
     sleep(3)
@@ -354,7 +354,7 @@ def stepSetSystemContract():
     # DISABLE_DEFERRED_TRXS_STAGE_1 - DISALLOW NEW DEFERRED TRANSACTIONS
     retry(args.cleos + 'push action eosio activate \'["fce57d2331667353a0eac6b4209b67b843a7262a848af0a49a6e2fa9f6584eb4"]\' -p eosio@active')
     # DISABLE_DEFERRED_TRXS_STAGE_2 - PREVENT PREVIOUSLY SCHEDULED DEFERRED TRANSACTIONS FROM REACHING OTHER NODE
-    # THIS DEPENDS ON DISABLE_DEFERRED_TRXS_STAGE_1 
+    # THIS DEPENDS ON DISABLE_DEFERRED_TRXS_STAGE_1
     retry(args.cleos + 'push action eosio activate \'["09e86cb0accf8d81c9e85d34bea4b925ae936626d00c984e4691186891f5bc16"]\' -p eosio@active')
     # SAVANNA
     # Depends on all previous protocol features
@@ -454,7 +454,7 @@ for (flag, command, function, inAll, help) in commands:
         parser.add_argument('-' + flag, '--' + command, action='store_true', help=help, dest=command)
     else:
         parser.add_argument('--' + command, action='store_true', help=help, dest=command)
-        
+
 args = parser.parse_args()
 
 # Leave a space in front of --url in case the user types cleos alone
