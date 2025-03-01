@@ -35,7 +35,7 @@ const static name owner_name      { "owner"_n };
 const static name eosio_any_name  { "eosio.any"_n };
 const static name eosio_code_name { "eosio.code"_n };
 
-const static int      block_interval_ms = 1500;
+const static int      block_interval_ms = 1000;
 const static int      block_interval_us = block_interval_ms*1000;
 const static uint64_t block_timestamp_epoch = 946684800000ll; // epoch is year 2000.
 const static uint32_t genesis_num_supported_key_types = 2;
@@ -57,7 +57,7 @@ static const uint32_t maximum_elastic_resource_multiplier  = 1000;
 const static uint32_t   rate_limiting_precision        = 1000*1000;
 
 
-const static uint32_t   default_max_block_net_usage                  = 1024 * 1024 * 4; ///
+const static uint32_t   default_max_block_net_usage                  = 1024 * 1024 * 4; /// 4 MB
 const static uint32_t   default_target_block_net_usage_pct           = 50 * percent_1; ///
 const static uint32_t   default_max_transaction_net_usage            = 3*default_max_block_net_usage/4;
 const static uint32_t   default_base_per_transaction_net_usage       = 12;  // 12 bytes (11 bytes for worst case of transaction_receipt_header + 1 byte for static_variant tag)
@@ -66,7 +66,7 @@ const static uint32_t   default_context_free_discount_net_usage_num  = 20; // TO
 const static uint32_t   default_context_free_discount_net_usage_den  = 100;
 const static uint32_t   transaction_id_net_usage                     = 32; // 32 bytes for the size of a transaction id
 
-const static uint32_t   default_max_block_cpu_usage                  = 1'300'000; /// max block cpu usage in microseconds
+const static uint32_t   default_max_block_cpu_usage                  = 800'000; /// max block cpu usage in microseconds
 const static uint32_t   default_target_block_cpu_usage_pct           = 50 * percent_1;
 const static uint32_t   default_max_transaction_cpu_usage            = 3*default_max_block_cpu_usage/4; /// max trx cpu usage in microseconds
 const static uint32_t   default_min_transaction_cpu_usage            = 0; ///
@@ -75,11 +75,11 @@ const static uint32_t   default_subjective_cpu_leeway_us             = 100'000; 
 const static uint32_t   default_max_trx_lifetime                     = 60*60; // 1 hour
 const static uint32_t   default_deferred_trx_expiration_window       = 10*60; // 10 minutes
 const static uint32_t   default_max_trx_delay                        = 45*24*3600; // 45 days
-const static uint32_t   default_max_inline_action_size               = 512 * 1024;   // 512 KB
-const static uint16_t   default_max_inline_action_depth              = 4;
+const static uint32_t   default_max_inline_action_size               = 512 * 1024 * 4;   // 2 MB
+const static uint16_t   default_max_inline_action_depth              = 6;
 const static uint16_t   default_max_auth_depth                       = 6;
 const static uint32_t   default_sig_cpu_bill_pct                     = 50 * percent_1; // billable percentage of signature recovery
-const static uint32_t   default_produce_block_offset_ms              = 450;
+const static uint32_t   default_produce_block_offset_ms              = 950;
 const static uint32_t   default_production_pause_vote_timeout_ms     = 6u*1000u; // 6 seconds
 const static uint16_t   default_controller_thread_pool_size          = 2;
 const static uint16_t   default_vote_thread_pool_size                = 4;
@@ -94,7 +94,7 @@ static_assert(MAX_SIZE_OF_BYTE_ARRAYS == 100*1024*1024, "Changing MAX_SIZE_OF_BY
 
 const static uint32_t default_max_wasm_mutable_global_bytes = 8192;
 const static uint32_t default_max_wasm_table_elements       = 8192;
-const static uint32_t default_max_wasm_section_elements     = 8192;
+const static uint32_t default_max_wasm_section_elements     = 65536;
 const static uint32_t default_max_wasm_linear_memory_init   = 512*1024;
 const static uint32_t default_max_wasm_func_local_bytes     = 65536;
 const static uint32_t default_max_wasm_nested_structures    = 65536;
@@ -128,11 +128,11 @@ const static uint32_t   default_abi_serializer_max_time_us = 100*1000; ///< defa
 /**
  *  The number of sequential blocks produced by a single producer
  */
-const static int producer_repetitions = 40;
+const static int producer_repetitions = 12;
 const static int max_producers = 125; // pre-savanna producer (proposer) limit
 const static int max_proposers = 64*1024; // savanna proposer (producer) limit
 
-const static size_t maximum_tracked_dpos_confirmations = 4096;     ///<
+const static size_t maximum_tracked_dpos_confirmations = 1024;     ///<
 static_assert(maximum_tracked_dpos_confirmations >= ((max_producers * 2 / 3) + 1) * producer_repetitions, "Settings never allow for DPOS irreversibility" );
 
 /**
