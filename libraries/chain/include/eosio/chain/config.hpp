@@ -132,7 +132,7 @@ const static int producer_repetitions = 40;
 const static int max_producers = 125; // pre-savanna producer (proposer) limit
 const static int max_proposers = 64*1024; // savanna proposer (producer) limit
 
-const static size_t maximum_tracked_dpos_confirmations = 1024;     ///<
+const static size_t maximum_tracked_dpos_confirmations = 4096;     ///<
 static_assert(maximum_tracked_dpos_confirmations >= ((max_producers * 2 / 3) + 1) * producer_repetitions, "Settings never allow for DPOS irreversibility" );
 
 /**
