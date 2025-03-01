@@ -16,7 +16,7 @@
 #endif
 
 #define MAX_NUM_ARRAY_ELEMENTS (1024*1024)
-#define MAX_SIZE_OF_BYTE_ARRAYS (20*1024*1024)
+#define MAX_SIZE_OF_BYTE_ARRAYS (100*1024*1024)
 
 //namespace std {
 //  typedef decltype(sizeof(int)) size_t;

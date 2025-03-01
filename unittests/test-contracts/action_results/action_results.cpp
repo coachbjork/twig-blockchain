@@ -4,7 +4,7 @@
 using namespace eosio;
 using namespace std;
 
-extern "C" { 
+extern "C" {
 __attribute__((eosio_wasm_import))
 void set_parameters_packed( const char* params, uint32_t params_size );
 __attribute__((eosio_wasm_import))
@@ -38,14 +38,14 @@ class [[eosio::contract]] action_results : public contract {
       }
 
       /**
-       * required to be called as system contract for priviledged host function call  
+       * required to be called as system contract for priviledged host function call
        */
       [[eosio::action]]
       void retmaxlim() {
-         
+
          char buffer[12];
          datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         //20mb is MAX_SIZE_OF_BYTE_ARRAYS that is defined in fc.
+         //100mb is MAX_SIZE_OF_BYTE_ARRAYS that is defined in fc.
          //we don't use fc in contracts so using hardcode here.
          ds << unsigned_int(uint32_t(1)) << unsigned_int(uint32_t(17)) << uint32_t(20*1024*1024);
          set_parameters_packed(buffer, ds.tellp());
@@ -57,10 +57,10 @@ class [[eosio::contract]] action_results : public contract {
 
       [[eosio::action]]
       void setliminv() {
-         
+
          char buffer[12];
          datastream<char*> ds((char*)&buffer, sizeof(buffer));
-         
+
          ds << unsigned_int(uint32_t(1)) << unsigned_int(uint32_t(17)) << uint32_t(20*1024*1024 + 1);
          //trying to set limit too large
          set_parameters_packed(buffer, ds.tellp());
