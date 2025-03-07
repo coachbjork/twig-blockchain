@@ -8,8 +8,10 @@ std::ostream& boost_test_print_type(std::ostream& os, const time_point& t) { ret
 std::ostream& boost_test_print_type(std::ostream& os, const std::optional<time_point>& t) { return os << (t ? t->to_iso_string() : "null"); }
 } // namespace fc
 
+static_assert(eosio::chain::config::block_interval_ms == 1000);
+
 constexpr auto       block_interval = fc::microseconds(eosio::chain::config::block_interval_us);
-constexpr auto       cpu_effort_us  = 1300000;
+constexpr auto       cpu_effort_us  = 900000;
 constexpr auto       cpu_effort     = fc::microseconds(cpu_effort_us);
 constexpr auto       production_round_1st_block_slot = 100 * eosio::chain::config::producer_repetitions;
 

@@ -105,7 +105,7 @@ def startNode(nodeIndex, account):
         # max-transaction-time must be less than block time
         # (which is defined in .../chain/include/eosio/chain/config.hpp
         # as block_interval_ms = 500)
-        '    --max-transaction-time=1300'
+        '    --max-transaction-time=800'
         '    --contracts-console'
         '    --genesis-json ' + os.path.abspath(args.genesis) +
         '    --blocks-dir ' + os.path.abspath(dir) + '/blocks'
