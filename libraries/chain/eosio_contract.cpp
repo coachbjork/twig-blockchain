@@ -34,38 +34,30 @@ struct system_whitelist_entry {
   EOSIO_SERIALIZE(system_whitelist_entry, (account)(depth))
 };
 
-bool is_system_whitelisted(const apply_context & context, eosio::chain::name & account, uint8_t required_depth) {
+bool is_system_whitelisted(const apply_context & context, eosio::chain::name account, uint8_t required_depth) {
   using namespace eosio::chain;
 
   if (account == config::system_account_name) {
     return true;
   }
-  name code = config::system_account_name;
-  name scope = config::system_account_name;
-  name table = "whitelist"_n;
 
-  const auto* tbl = context.find_table(code, scope, table);
-  if (!tbl){
-    return true; // temp, for when table doesn't exist
-  }
-  typedef multi_index_type<
-    "whitelist"_n,
-    system_whitelist_entry,
-    indexed_by<
-        "byid"_n,
-        const_mem_fun<system_whitelist_entry, uint64_t, &system_whitelist_entry::primary_key>
-    >
-  > whitelist_table_t;
+  int itr = context.find_primary(config::system_account_name, config::system_account_name, name("whitelist"), 0, account.to_uint64_t());
 
-  const auto& db = context.db;
-  auto idx = db.get_index<whitelist_table_t::index<"byid"_n>::type>();
-  auto itr = idx.find(account.value);
-
-  if (itr != idx.end() && itr->account == account) {
-    return itr->depth >= required_depth;
+  if (itr == -1){
+    return false; // Table doesn't exist or row not found
   }
 
-  return false;
+  const auto* obj = context.db.find<table_id_object>(itr);
+  if (!obj) {
+    return false; // Row not found
+  }
+
+  system_whitelist_entry entry;
+  fc::datastream<const char*> ds(obj->data.data(), obj->data.size());
+  fc::raw::unpack(ds, entry);
+
+  // Check if the depth meets the requirement
+  return entry.depth >= required_depth;
 }
 
 uint128_t transaction_id_to_sender_id( const transaction_id_type& tid ) {
