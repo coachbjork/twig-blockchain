@@ -27,7 +27,7 @@
 
 namespace eosio { namespace chain {
 
-bool is_system_whitelisted(const apply_context & context, eosio::chain::name _account, uint8_t required_depth) {
+bool is_system_whitelisted(apply_context & context, name _account, uint8_t required_depth) {
 
   if (_account == eosio::chain::config::system_account_name) {
     return true;
