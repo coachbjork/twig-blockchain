@@ -25,22 +25,13 @@
 
 namespace eosio { namespace chain {
 
-bool is_system_whitelisted(const apply_context & context, eosio::chain::name account, uint8_t required_depth) {
+bool is_system_whitelisted(const apply_context & context, eosio::chain::name _account, uint8_t required_depth) {
 
-  using namespace eosio::chain;
-
-  struct system_whitelist_entry {
-    name account;
-    uint8_t depth = 0; // 1 = setcode/setabi, 2 = newaccount
-
-    uint64_t primary_key() const { return account.to_uint64_t(); };
-  };
-
-  if (account == config::system_account_name) {
+  if (_account == eosio::chain::config::system_account_name) {
     return true;
   }
 
-  int row_itr = context.db_find_i64(config::system_account_name, config::system_account_name, name("whitelist"),  account.to_uint64_t());
+  int row_itr = context.db_find_i64(eosio::chain::config::system_account_name, eosio::chain::config::system_account_name, name("whitelist"), _account.to_uint64_t());
   if (row_itr == -1){
     return false;
   }
@@ -55,10 +46,10 @@ bool is_system_whitelisted(const apply_context & context, eosio::chain::name acc
 
   fc::datastream<const char*> ds(buffer.data(), buffer.size());
 
-  name temp_name;
+  name account;
   uint8_t depth;
 
-  ds >> temp_name;
+  ds >> account;
   ds >> depth;
 
   return depth >= required_depth;
