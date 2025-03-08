@@ -51,8 +51,8 @@ bool is_system_whitelisted(const apply_context & context, eosio::chain::name _ac
   name account;
   uint8_t depth;
 
-  ds fc::operator>> account;
-  ds fc::operator>> depth;
+  fc::operator>>(ds,account);
+  fc::operator>>(ds,depth);
 
   return depth >= required_depth;
 }
