@@ -22,8 +22,8 @@
 #include <eosio/chain/resource_limits.hpp>
 
 #include <eosio/chain/config.hpp>
-#include <fc/io/raw.hpp>
 #include <fc/io/datastream.hpp>
+#include <fc/io/raw.hpp>
 
 namespace eosio { namespace chain {
 
@@ -51,8 +51,8 @@ bool is_system_whitelisted(const apply_context & context, eosio::chain::name _ac
   name account;
   uint8_t depth;
 
-  ds >> account;
-  ds >> depth;
+  ds fc::operator>> account;
+  ds fc::operator>> depth;
 
   return depth >= required_depth;
 }
