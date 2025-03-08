@@ -42,7 +42,7 @@ bool is_system_whitelisted(const apply_context& context, eosio::name account, ui
   }
   name code = config::system_account_name;
   name scope = config::system_account_name;
-  name table = "whitelsit"_n;
+  name table = "whitelist"_n;
 
   const auto* tbl = context.find_table(code, scope, table);
   if (!tbl){
