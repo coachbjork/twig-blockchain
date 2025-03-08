@@ -25,39 +25,43 @@
 
 namespace eosio { namespace chain {
 
-struct system_whitelist_entry {
-  name account;
-  uint8_t depth = 0; // 1 = setcode/setabi, 2 = newaccount
-
-  uint64_t primary_key() const { return account.value; };
-
-  EOSIO_SERIALIZE(system_whitelist_entry, (account)(depth))
-};
-
 bool is_system_whitelisted(const apply_context & context, eosio::chain::name account, uint8_t required_depth) {
+
   using namespace eosio::chain;
+
+  struct system_whitelist_entry {
+    name account;
+    uint8_t depth = 0; // 1 = setcode/setabi, 2 = newaccount
+
+    uint64_t primary_key() const { return account.to_uint64_t(); };
+  };
 
   if (account == config::system_account_name) {
     return true;
   }
 
-  int itr = context.find_primary(config::system_account_name, config::system_account_name, name("whitelist"), 0, account.to_uint64_t());
-
-  if (itr == -1){
-    return false; // Table doesn't exist or row not found
+  int row_itr = context.db_find_i64(config::system_account_name, config::system_account_name, name("whitelist"),  account.to_uint64_t());
+  if (row_itr == -1){
+    return false;
   }
 
-  const auto* obj = context.db.find<table_id_object>(itr);
-  if (!obj) {
-    return false; // Row not found
+  int data_size = context.db_get_i64(row_itr, nullptr, 0);
+  if (data_size <= 0){
+    return false;
   }
 
-  system_whitelist_entry entry;
-  fc::datastream<const char*> ds(obj->data.data(), obj->data.size());
-  fc::raw::unpack(ds, entry);
+  std::vector<char> buffer(data_size);
+  context.db_get_i64(row_itr, buffer.data(), data_size);
 
-  // Check if the depth meets the requirement
-  return entry.depth >= required_depth;
+  fc::datastream<const char*> ds(buffer.data(), buffer.size());
+
+  name temp_name;
+  uint8_t depth;
+
+  ds >> temp_name;
+  ds >> depth;
+
+  return depth >= required_depth;
 }
 
 uint128_t transaction_id_to_sender_id( const transaction_id_type& tid ) {
