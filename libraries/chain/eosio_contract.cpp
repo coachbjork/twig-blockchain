@@ -34,7 +34,7 @@ struct system_whitelist_entry {
   EOSIO_SERIALIZE(system_whitelist_entry, (account)(depth))
 };
 
-bool is_system_whitelisted(const apply_context& context, eosio::name account, uint8_t required_depth) {
+bool is_system_whitelisted(const apply_context & context, eosio::chain::name & account, uint8_t required_depth) {
   using namespace eosio::chain;
 
   if (account == config::system_account_name) {
