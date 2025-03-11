@@ -172,9 +172,9 @@ void apply_eosio_setcode(apply_context& context) {
    context.require_authorization(act.account);
 
    // Check whitelist: sender must have depth >= 1
-   EOS_ASSERT(is_system_whitelisted(context, context.get_sender(), 1), action_validate_exception,
+   EOS_ASSERT(is_system_whitelisted(context, act.account, 1), action_validate_exception,
         "Account '${account}' is not whitelisted for setcode action",
-        ("account", context.get_sender()));
+        ("account", act.account));
 
    EOS_ASSERT( act.vmtype == 0, invalid_contract_vm_type, "code should be 0" );
    EOS_ASSERT( act.vmversion == 0, invalid_contract_vm_version, "version should be 0" );
@@ -257,14 +257,14 @@ void apply_eosio_setcode(apply_context& context) {
 void apply_eosio_setabi(apply_context& context) {
    EOS_ASSERT( !context.trx_context.is_read_only(), action_validate_exception, "setabi ot allowed in read-only transaction" );
    auto& db  = context.db;
-   auto  act = context.get_action().data_as<setabi>();
+   auto act = context.get_action().data_as<setabi>();
 
    context.require_authorization(act.account);
 
    // Check whitelist: sender must have depth >= 1
-   EOS_ASSERT(is_system_whitelisted(context, context.get_sender(), 1), action_validate_exception,
+   EOS_ASSERT(is_system_whitelisted(context, act.account, 1), action_validate_exception,
       "Account '${account}' is not whitelisted for setabi action",
-      ("account", context.get_sender()));
+      ("account", act.account));
 
    const auto& account = db.get<account_object,by_name>(act.account);
 
